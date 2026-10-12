@@ -26,10 +26,12 @@ class Document(Base):
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
     filename: Mapped[str] = mapped_column(String(255))
     status: Mapped[str] = mapped_column(String(20), default="processing")
+    error: Mapped[str | None] = mapped_column(String(500), nullable=True)
+    storage_path: Mapped[str | None] = mapped_column(String(500), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
     owner = relationship("User", back_populates="documents")
-    chunks = relationship("Chunk", back_populates="document", cascade="all, delete-orphan")
+    chunks = relationship("Chunk", back_populates="document", cascade="all, delete-orphan", passive_deletes=True)
 
 
 class Chunk(Base):
