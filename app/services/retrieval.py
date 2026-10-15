@@ -26,12 +26,17 @@ def vector_search(db: Session, user_id: int, query: str, doc_ids=None, limit: in
     return list(db.scalars(stmt))
 
 
+def _tokens(query: str) -> list[str]:
+    # 3.16 jaise tokens tootne nahi chahiye, isliye dot/hyphen word ke andar allow
+    tokens = re.findall(r"\w+(?:[.\-]\w+)*", query.lower())
+    return [t for t in tokens if t != "or"]  # websearch me "or" operator hota hai
+
+
 def keyword_search(db: Session, user_id: int, query: str, doc_ids=None, limit: int = CANDIDATES) -> list[int]:
-    # sab words ko OR se jodo. websearch_to_tsquery AND lagata hai, lamba sawaal kuch match nahi karta.
-    tokens = re.findall(r"\w+", query.lower())
+    tokens = _tokens(query)
     if not tokens:
         return []
-    tsq = func.to_tsquery("english", " | ".join(tokens))
+    tsq = func.websearch_to_tsquery("english", " or ".join(tokens))
     stmt = (
         _base(user_id, doc_ids)
         .where(Chunk.tsv.op("@@")(tsq))
