@@ -4,7 +4,13 @@ import time
 from sqlalchemy.orm import Session
 
 from app.services.llm import chat
-from app.services.prompting import NOT_FOUND, build_messages, build_sources, extract_citations
+from app.services.prompting import (
+    NOT_FOUND,
+    build_messages,
+    build_sources,
+    extract_citations,
+    snippet_terms,
+)
 from app.services.retrieval import retrieve
 
 logger = logging.getLogger("docmind.qa")
@@ -26,12 +32,13 @@ def answer_question(
     else:
         answer = chat(build_messages(question, chunks))
         cited = extract_citations(answer, len(chunks))
+        terms = snippet_terms(question, answer)
         if answer.startswith(NOT_FOUND):
             sources = []
         elif cited:
-            sources = build_sources(chunks, cited)
+            sources = build_sources(chunks, cited, terms)
         else:  # LLM ne cite nahi kiya: retrieved chunks dikhao, par flag ke saath
-            sources = build_sources(chunks, list(range(1, len(chunks) + 1)))
+            sources = build_sources(chunks, list(range(1, len(chunks) + 1)), terms)
         result = {"answer": answer, "sources": sources, "cited": bool(cited)}
 
     result["mode"] = mode
