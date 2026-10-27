@@ -1,0 +1,23 @@
+{
+  "chunk_size": 200,
+  "overlap": 30,
+  "ingested_at": "2026-10-26T10:16:21+00:00",
+  "files": {
+    "AI_Risk_Management.pdf": {
+      "pages": 48,
+      "chunks": 111
+    },
+    "Alienware.pdf": {
+      "pages": 158,
+      "chunks": 257
+    },
+    "Llama.pdf": {
+      "pages": 77,
+      "chunks": 274
+    },
+    "Philippines_WHO.pdf": {
+      "pages": 64,
+      "chunks": 128
+    }
+  }
+}

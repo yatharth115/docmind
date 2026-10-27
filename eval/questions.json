@@ -1,0 +1,387 @@
+[
+  {
+    "id": "q01",
+    "question": "What does MEASURE 2.12 require organizations to do?",
+    "file": "AI_Risk_Management.pdf",
+    "pages": [
+      35
+    ],
+    "type": "exact"
+  },
+  {
+    "id": "q02",
+    "question": "What are the three broad sources or families of bias discussed in the AI RMF?",
+    "file": "AI_Risk_Management.pdf",
+    "pages": [
+      23
+    ],
+    "type": "paraphrase"
+  },
+  {
+    "id": "q03",
+    "question": "What is the purpose of the GOVERN function in the AI RMF?",
+    "file": "AI_Risk_Management.pdf",
+    "pages": [
+      26,
+      27
+    ],
+    "type": "exact"
+  },
+  {
+    "id": "q04",
+    "question": "What is the AI RMF Playbook?",
+    "file": "AI_Risk_Management.pdf",
+    "pages": [
+      26
+    ],
+    "type": "exact"
+  },
+  {
+    "id": "q05",
+    "question": "How can independent review help improve AI system testing?",
+    "file": "AI_Risk_Management.pdf",
+    "pages": [
+      33
+    ],
+    "type": "paraphrase"
+  },
+  {
+    "id": "q06",
+    "question": "What does MAP 3.5 address?",
+    "file": "AI_Risk_Management.pdf",
+    "pages": [
+      32
+    ],
+    "type": "exact"
+  },
+  {
+    "id": "q07",
+    "question": "What does MANAGE 1.4 call for?",
+    "file": "AI_Risk_Management.pdf",
+    "pages": [
+      37
+    ],
+    "type": "exact"
+  },
+  {
+    "id": "q08",
+    "question": "How does the MEASURE function support the MANAGE function in AI risk management?",
+    "file": "AI_Risk_Management.pdf",
+    "pages": [
+      33
+    ],
+    "type": "paraphrase"
+  },
+  {
+    "id": "q09",
+    "question": "In what year was the NIST AI Risk Management Framework 1.0 published?",
+    "file": "AI_Risk_Management.pdf",
+    "pages": [
+      2
+    ],
+    "type": "numeric"
+  },
+  {
+    "id": "q10",
+    "question": "How many core functions make up the NIST AI RMF?",
+    "file": "AI_Risk_Management.pdf",
+    "pages": [
+      8,
+      25
+    ],
+    "type": "numeric"
+  },
+  {
+    "id": "q11",
+    "question": "What is Llama 2-Chat?",
+    "file": "Llama.pdf",
+    "pages": [
+      1
+    ],
+    "type": "exact"
+  },
+  {
+    "id": "q12",
+    "question": "Which two techniques are used during the RLHF stage of Llama 2-Chat training?",
+    "file": "Llama.pdf",
+    "pages": [
+      5,
+      13
+    ],
+    "type": "paraphrase"
+  },
+  {
+    "id": "q13",
+    "question": "What is the purpose of rejection sampling in Llama 2-Chat training?",
+    "file": "Llama.pdf",
+    "pages": [
+      13,
+      14,
+      15
+    ],
+    "type": "paraphrase"
+  },
+  {
+    "id": "q14",
+    "question": "What does PPO stand for in the Llama 2-Chat RLHF process?",
+    "file": "Llama.pdf",
+    "pages": [
+      5,
+      13
+    ],
+    "type": "exact"
+  },
+  {
+    "id": "q15",
+    "question": "Why can optimizing helpfulness and safety together be challenging for the reward model?",
+    "file": "Llama.pdf",
+    "pages": [
+      10,
+      13,
+      24,
+      58
+    ],
+    "type": "paraphrase"
+  },
+  {
+    "id": "q16",
+    "question": "Up to how many turns did the GAtt evaluation remain consistent?",
+    "file": "Llama.pdf",
+    "pages": [
+      17
+    ],
+    "type": "numeric"
+  },
+  {
+    "id": "q17",
+    "question": "How did the researchers use red teaming to examine Llama 2-Chat safety?",
+    "file": "Llama.pdf",
+    "pages": [
+      28,
+      29
+    ],
+    "type": "paraphrase"
+  },
+  {
+    "id": "q18",
+    "question": "How many adversarial prompts were collected for the safety human evaluation?",
+    "file": "Llama.pdf",
+    "pages": [
+      4,
+      29
+    ],
+    "type": "numeric"
+  },
+  {
+    "id": "q19",
+    "question": "How many tokens of data were used to train Llama 2?",
+    "file": "Llama.pdf",
+    "pages": [
+      5,
+      77
+    ],
+    "type": "numeric"
+  },
+  {
+    "id": "q20",
+    "question": "How many annotators independently assessed each model-generation comparison in the human evaluations?",
+    "file": "Llama.pdf",
+    "pages": [
+      19,
+      57
+    ],
+    "type": "numeric"
+  },
+  {
+    "id": "q21",
+    "question": "Which two institutions jointly present the Philippines–WHO Country Cooperation Strategy?",
+    "file": "Philippines_WHO.pdf",
+    "pages": [
+      7
+    ],
+    "type": "paraphrase"
+  },
+  {
+    "id": "q22",
+    "question": "What does the abbreviation CCS stand for in the document?",
+    "file": "Philippines_WHO.pdf",
+    "pages": [
+      7,
+      9,
+      29
+    ],
+    "type": "exact"
+  },
+  {
+    "id": "q23",
+    "question": "What is the aim of the strategic priority concerning international health collaboration?",
+    "file": "Philippines_WHO.pdf",
+    "pages": [
+      13,
+      46
+    ],
+    "type": "paraphrase"
+  },
+  {
+    "id": "q24",
+    "question": "Which framework is used to monitor progress and support accountability during implementation?",
+    "file": "Philippines_WHO.pdf",
+    "pages": [
+      52,
+      53
+    ],
+    "type": "paraphrase"
+  },
+  {
+    "id": "q25",
+    "question": "How does the strategy aim to improve access to essential health services for different population groups?",
+    "file": "Philippines_WHO.pdf",
+    "pages": [
+      31,
+      32
+    ],
+    "type": "paraphrase"
+  },
+  {
+    "id": "q26",
+    "question": "How does the strategy describe cooperation across sectors as a way to improve health outcomes?",
+    "file": "Philippines_WHO.pdf",
+    "pages": [
+      42,
+      43,
+      48,
+      49
+    ],
+    "type": "paraphrase"
+  },
+  {
+    "id": "q27",
+    "question": "What does the mid-term review assess, and what decisions can it inform?",
+    "file": "Philippines_WHO.pdf",
+    "pages": [
+      13,
+      53
+    ],
+    "type": "paraphrase"
+  },
+  {
+    "id": "q28",
+    "question": "Which strategic deliverable refers to increased innovation and digital transformation?",
+    "file": "Philippines_WHO.pdf",
+    "pages": [
+      13,
+      44
+    ],
+    "type": "paraphrase"
+  },
+  {
+    "id": "q29",
+    "question": "How many strategic priorities guide the Philippines–WHO Country Cooperation Strategy?",
+    "file": "Philippines_WHO.pdf",
+    "pages": [
+      6,
+      30
+    ],
+    "type": "numeric"
+  },
+  {
+    "id": "q30",
+    "question": "What is the total estimated budget for the 2025–2028 strategy period?",
+    "file": "Philippines_WHO.pdf",
+    "pages": [
+      51
+    ],
+    "type": "numeric"
+  },
+  {
+    "id": "q31",
+    "question": "What is the regulatory model number of the Alienware 16X Aurora AC16251?",
+    "file": "Alienware.pdf",
+    "pages": [
+      1
+    ],
+    "type": "exact"
+  },
+  {
+    "id": "q32",
+    "question": "What happens when AW Stealth mode is enabled?",
+    "file": "Alienware.pdf",
+    "pages": [
+      21
+    ],
+    "type": "paraphrase"
+  },
+  {
+    "id": "q33",
+    "question": "What memory type is listed for the NVIDIA GeForce RTX 5070 discrete GPU?",
+    "file": "Alienware.pdf",
+    "pages": [
+      27
+    ],
+    "type": "exact"
+  },
+  {
+    "id": "q34",
+    "question": "Where can the Express Service Code be found, and what is it used for?",
+    "file": "Alienware.pdf",
+    "pages": [
+      11,
+      12
+    ],
+    "type": "paraphrase"
+  },
+  {
+    "id": "q35",
+    "question": "Which application provides centralized control of performance, thermal/power profiles, and AlienFX lighting?",
+    "file": "Alienware.pdf",
+    "pages": [
+      14
+    ],
+    "type": "paraphrase"
+  },
+  {
+    "id": "q36",
+    "question": "Which ports can be used to connect a G-SYNC-capable external display?",
+    "file": "Alienware.pdf",
+    "pages": [
+      27
+    ],
+    "type": "paraphrase"
+  },
+  {
+    "id": "q37",
+    "question": "What does a solid amber battery-status light indicate when the computer is on?",
+    "file": "Alienware.pdf",
+    "pages": [
+      12
+    ],
+    "type": "paraphrase"
+  },
+  {
+    "id": "q38",
+    "question": "What can the preprogrammable macro keys be configured to do?",
+    "file": "Alienware.pdf",
+    "pages": [
+      21
+    ],
+    "type": "paraphrase"
+  },
+  {
+    "id": "q39",
+    "question": "What is the diagonal viewing angle of the infrared camera?",
+    "file": "Alienware.pdf",
+    "pages": [
+      22
+    ],
+    "type": "numeric"
+  },
+  {
+    "id": "q40",
+    "question": "What is the vertical dimension of the touchpad, in millimetres?",
+    "file": "Alienware.pdf",
+    "pages": [
+      23
+    ],
+    "type": "numeric"
+  }
+]
