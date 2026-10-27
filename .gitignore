@@ -4,3 +4,4 @@ __pycache__/
 *.pyc
 uploads/
 eval/corpus/*.pdf
+eval/audit_failures.txt
