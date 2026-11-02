@@ -9,6 +9,9 @@ services:
       LLM_API_KEY: ${LLM_API_KEY:-}
       LLM_BASE_URL: ${LLM_BASE_URL:-https://generativelanguage.googleapis.com/v1beta/openai}
       LLM_MODEL: ${LLM_MODEL:-gemini-3.6-flash}
+      ENABLE_RERANK: ${ENABLE_RERANK:-true}
+      ALLOW_REGISTRATION: ${ALLOW_REGISTRATION:-true}
+      READ_ONLY_DOCS: ${READ_ONLY_DOCS:-false}
     ports:
       - "8000:8000"
     dns:

@@ -1,15 +1,40 @@
+import os
 import sys
 import time
 from pathlib import Path
 
 import streamlit as st
 
-sys.path.insert(0, str(Path(__file__).parent))
-import api_client as api  # noqa: E402
-from helpers import MODE_LABELS, MODES, safe_markdown, source_label, status_text  # noqa: E402
-
 st.set_page_config(page_title="DocMind", layout="wide")
 
+
+def _setting(name: str) -> str | None:
+    """Value env variable se lo, nahi to Streamlit Cloud ke secrets se."""
+    value = os.getenv(name)
+    if value:
+        return value
+    try:
+        return str(st.secrets[name])
+    except Exception:
+        return None
+
+
+_api_url = _setting("DOCMIND_API_URL")
+if _api_url:
+    os.environ["DOCMIND_API_URL"] = _api_url
+
+sys.path.insert(0, str(Path(__file__).parent))
+import api_client as api  # noqa: E402
+from helpers import (  # noqa: E402
+    MODE_LABELS,
+    available_modes,
+    default_mode,
+    safe_markdown,
+    source_label,
+    status_text,
+)
+
+DEMO_HINT = _setting("DOCMIND_DEMO_HINT")
 MAX_UPLOAD_MB = 20
 
 
@@ -19,6 +44,7 @@ def init_state() -> None:
     st.session_state.setdefault("messages", [])
     st.session_state.setdefault("notice", None)
     st.session_state.setdefault("uploader_n", 0)
+    st.session_state.setdefault("config", None)
 
 
 def logout(message: str | None = None) -> None:
@@ -28,44 +54,73 @@ def logout(message: str | None = None) -> None:
     st.session_state["notice"] = message
     st.rerun()
 
-def auth_view() -> None:
+
+def load_config() -> dict:
+    if st.session_state.get("config") is None:
+        with st.spinner(
+            "Connecting to the API. Free hosting sleeps when idle, so the first visit can take up to a minute..."
+        ):
+            try:
+                st.session_state["config"] = api.get_config()
+            except api.ApiError as e:
+                st.error(str(e))
+                if st.button("Try again"):
+                    st.rerun()
+                st.stop()
+    return st.session_state["config"]
+
+
+def login_form() -> None:
+    with st.form("login_form"):
+        email = st.text_input("Email")
+        password = st.text_input("Password", type="password")
+        submitted = st.form_submit_button("Log in")
+    if submitted:
+        try:
+            token = api.login(email.strip(), password)
+        except api.ApiError as e:
+            st.error(str(e))
+        else:
+            st.session_state["token"] = token
+            st.session_state["email"] = email.strip()
+            st.rerun()
+
+
+def register_form() -> None:
+    with st.form("register_form"):
+        email = st.text_input("Email", key="reg_email")
+        password = st.text_input("Password (8 to 72 characters)", type="password", key="reg_password")
+        submitted = st.form_submit_button("Create account")
+    if submitted:
+        try:
+            api.register(email.strip(), password)
+            token = api.login(email.strip(), password)
+        except api.ApiError as e:
+            st.error(str(e))
+        else:
+            st.session_state["token"] = token
+            st.session_state["email"] = email.strip()
+            st.rerun()
+
+
+def auth_view(config: dict) -> None:
     st.title("DocMind")
-    st.caption("Ask questions about your own PDF and DOCX files. Every answer comes with page citations.")
+    st.caption("Ask questions about your documents. Every answer comes with page citations.")
+    if DEMO_HINT:
+        st.info(DEMO_HINT)
     if st.session_state.get("notice"):
         st.warning(st.session_state["notice"])
         st.session_state["notice"] = None
 
-    login_tab, register_tab = st.tabs(["Log in", "Create account"])
-    with login_tab:
-        with st.form("login_form"):
-            email = st.text_input("Email")
-            password = st.text_input("Password", type="password")
-            submitted = st.form_submit_button("Log in")
-        if submitted:
-            try:
-                token = api.login(email.strip(), password)
-            except api.ApiError as e:
-                st.error(str(e))
-            else:
-                st.session_state["token"] = token
-                st.session_state["email"] = email.strip()
-                st.rerun()
+    if config.get("registration_enabled", True):
+        login_tab, register_tab = st.tabs(["Log in", "Create account"])
+        with login_tab:
+            login_form()
+        with register_tab:
+            register_form()
+    else:
+        login_form()
 
-    with register_tab:
-        with st.form("register_form"):
-            email = st.text_input("Email", key="reg_email")
-            password = st.text_input("Password (8 to 72 characters)", type="password", key="reg_password")
-            submitted = st.form_submit_button("Create account")
-        if submitted:
-            try:
-                api.register(email.strip(), password)
-                token = api.login(email.strip(), password)
-            except api.ApiError as e:
-                st.error(str(e))
-            else:
-                st.session_state["token"] = token
-                st.session_state["email"] = email.strip()
-                st.rerun()
 
 def wait_until_ready(token: str, doc_id: int, timeout: int = 180) -> None:
     with st.status("Reading, chunking and embedding your document...", expanded=True) as status:
@@ -88,30 +143,36 @@ def wait_until_ready(token: str, doc_id: int, timeout: int = 180) -> None:
         status.update(label="Still processing. Refresh the page in a minute.", state="running")
 
 
-def documents_view(token: str, docs: list[dict]) -> None:
-    st.subheader("Your documents")
-    upload = st.file_uploader(
-        f"Upload a PDF or DOCX (max {MAX_UPLOAD_MB} MB)",
-        type=["pdf", "docx"],
-        key=f"uploader_{st.session_state['uploader_n']}",
-    )
-    if upload is not None and st.button("Process document", type="primary"):
-        data = upload.getvalue()
-        if len(data) > MAX_UPLOAD_MB * 1024 * 1024:
-            st.error(f"File is larger than {MAX_UPLOAD_MB} MB.")
-        else:
-            try:
-                created = api.upload_document(token, upload.name, data)
-            except api.ApiError as e:
-                st.error(str(e))
+def documents_view(token: str, docs: list[dict], read_only: bool) -> None:
+    st.subheader("Documents")
+    if read_only:
+        st.caption(
+            "This public demo is read-only: the documents below are pre-loaded. "
+            "To upload your own files, run DocMind locally with Docker (see the README)."
+        )
+    else:
+        upload = st.file_uploader(
+            f"Upload a PDF or DOCX (max {MAX_UPLOAD_MB} MB)",
+            type=["pdf", "docx"],
+            key=f"uploader_{st.session_state['uploader_n']}",
+        )
+        if upload is not None and st.button("Process document", type="primary"):
+            data = upload.getvalue()
+            if len(data) > MAX_UPLOAD_MB * 1024 * 1024:
+                st.error(f"File is larger than {MAX_UPLOAD_MB} MB.")
             else:
-                wait_until_ready(token, created["id"])
-                st.session_state["uploader_n"] += 1
-                time.sleep(1)
-                st.rerun()
+                try:
+                    created = api.upload_document(token, upload.name, data)
+                except api.ApiError as e:
+                    st.error(str(e))
+                else:
+                    wait_until_ready(token, created["id"])
+                    st.session_state["uploader_n"] += 1
+                    time.sleep(1)
+                    st.rerun()
 
     if not docs:
-        st.info("No documents yet. Upload one to get started.")
+        st.info("No documents yet.")
         return
     if st.button("Refresh list"):
         st.rerun()
@@ -120,7 +181,7 @@ def documents_view(token: str, docs: list[dict]) -> None:
         c1.write(d["filename"])
         c2.write(status_text(d))
         c3.write(f"{d['chunks']} chunks")
-        if c4.button("Delete", key=f"delete_{d['id']}"):
+        if not read_only and c4.button("Delete", key=f"delete_{d['id']}"):
             try:
                 api.delete_document(token, d["id"])
             except api.ApiError as e:
@@ -129,6 +190,7 @@ def documents_view(token: str, docs: list[dict]) -> None:
                 st.rerun()
         if d["status"] == "failed" and d.get("error"):
             st.caption(f"Error: {d['error']}")
+
 
 def render_sources(msg: dict) -> None:
     sources = msg.get("sources") or []
@@ -151,16 +213,17 @@ def render_message(msg: dict) -> None:
             render_sources(msg)
 
 
-def chat_view(token: str, docs: list[dict]) -> None:
+def chat_view(token: str, docs: list[dict], config: dict) -> None:
     ready = [d for d in docs if d["status"] == "ready"]
     if not ready:
-        st.info("Upload a document in the Documents tab, then ask questions here.")
+        st.info("No ready documents yet. Add one in the Documents tab, then ask questions here.")
         return
     names = {d["id"]: d["filename"] for d in ready}
+    modes = available_modes(config)
 
     with st.expander("Search settings"):
         mode = st.selectbox(
-            "Retrieval mode", MODES, index=MODES.index("hybrid_rerank"), format_func=MODE_LABELS.get
+            "Retrieval mode", modes, index=modes.index(default_mode(config)), format_func=MODE_LABELS.get
         )
         top_k = st.slider("Excerpts sent to the model", 3, 8, 5)
         selected = st.multiselect(
@@ -197,15 +260,20 @@ def chat_view(token: str, docs: list[dict]) -> None:
     st.session_state["messages"].append(reply)
     st.rerun()
 
+
 def main() -> None:
     init_state()
+    config = load_config()
     if not st.session_state["token"]:
-        auth_view()
+        auth_view(config)
         return
 
     token = st.session_state["token"]
+    read_only = config.get("read_only", False)
     with st.sidebar:
         st.write(st.session_state["email"])
+        if read_only:
+            st.caption("Read-only demo")
         if st.button("Log out"):
             logout()
         if st.button("Clear chat"):
@@ -223,10 +291,9 @@ def main() -> None:
     st.title("DocMind")
     chat_tab, docs_tab = st.tabs(["Chat", "Documents"])
     with docs_tab:
-        documents_view(token, docs)
+        documents_view(token, docs, read_only)
     with chat_tab:
-        chat_view(token, docs)
+        chat_view(token, docs, config)
 
 
 main()
-

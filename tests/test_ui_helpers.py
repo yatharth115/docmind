@@ -85,3 +85,24 @@ def test_ask_sends_none_for_empty_doc_filter(monkeypatch):
     api.ask("tok", "q?", "hybrid", 5, [])
     assert seen["json"]["doc_ids"] is None
     assert seen["headers"]["Authorization"] == "Bearer tok"
+
+def test_available_modes_hides_rerank_when_disabled():
+    from ui.helpers import available_modes, default_mode
+
+    assert "hybrid_rerank" in available_modes({"rerank_enabled": True})
+    assert "hybrid_rerank" not in available_modes({"rerank_enabled": False})
+    assert default_mode({"rerank_enabled": True}) == "hybrid_rerank"
+    assert default_mode({"rerank_enabled": False}) == "vector"
+    assert default_mode({}) == "hybrid_rerank"  # config na mile to purana behaviour
+
+
+def test_get_config_calls_config_endpoint(monkeypatch):
+    seen = {}
+
+    def fake(method, url, **kwargs):
+        seen["url"] = url
+        return FakeResp(200, {"rerank_enabled": False, "registration_enabled": False, "read_only": True})
+
+    monkeypatch.setattr(api.requests, "request", fake)
+    assert api.get_config()["read_only"] is True
+    assert seen["url"].endswith("/config")

@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 
 from app.api.deps import get_current_user
 from app.core.security import create_access_token, hash_password, verify_password
+from app.core.config import settings
 from app.db.models import User
 from app.db.session import get_db
 
@@ -18,6 +19,8 @@ class RegisterIn(BaseModel):
 
 @router.post("/register", status_code=201)
 def register(data: RegisterIn, db: Session = Depends(get_db)):
+    if not settings.ALLOW_REGISTRATION:
+        raise HTTPException(status_code=403, detail="Registration is disabled on this deployment")
     if db.query(User).filter(User.email == data.email).first():
         raise HTTPException(status_code=400, detail="Email already registered")
     user = User(email=data.email, hashed_password=hash_password(data.password))

@@ -30,3 +30,12 @@ def status_text(doc: dict) -> str:
     if doc["status"] == "failed":
         return "Failed"
     return "Processing..."
+
+def available_modes(config: dict) -> list[str]:
+    if config.get("rerank_enabled", True):
+        return list(MODES)
+    return [m for m in MODES if m != "hybrid_rerank"]
+
+
+def default_mode(config: dict) -> str:
+    return "hybrid_rerank" if config.get("rerank_enabled", True) else "vector"

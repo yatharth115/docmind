@@ -11,12 +11,14 @@ from app.db.session import SessionLocal, get_db
 from app.services.chunking import chunk_segments
 from app.services.embedding import embed_texts
 from app.services.parsing import parse_file
+from app.core.config import settings
 
 router = APIRouter(prefix="/documents", tags=["documents"])
 
 UPLOAD_DIR = Path("uploads")
 ALLOWED_SUFFIXES = {".pdf", ".docx"}
 MAX_BYTES = 20 * 1024 * 1024  # 20 MB
+READ_ONLY_MESSAGE = "This demo is read-only: uploading and deleting documents is disabled."
 
 
 def process_document(doc_id: int, path: str) -> None:
@@ -80,6 +82,8 @@ async def upload_document(
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
+    if settings.READ_ONLY_DOCS:
+        raise HTTPException(status_code=403, detail=READ_ONLY_MESSAGE)
     suffix = Path(file.filename or "").suffix.lower()
     if suffix not in ALLOWED_SUFFIXES:
         raise HTTPException(status_code=400, detail="Only PDF and DOCX files are supported")
@@ -143,6 +147,8 @@ def preview_chunks(
 
 @router.delete("/{doc_id}", status_code=204)
 def delete_document(doc_id: int, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+    if settings.READ_ONLY_DOCS:
+        raise HTTPException(status_code=403, detail=READ_ONLY_MESSAGE)
     doc = _owned_doc(db, user, doc_id)
     if doc.storage_path:
         Path(doc.storage_path).unlink(missing_ok=True)

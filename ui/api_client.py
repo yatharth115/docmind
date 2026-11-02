@@ -61,3 +61,6 @@ def delete_document(token: str, doc_id: int) -> None:
 def ask(token: str, question: str, mode: str, top_k: int, doc_ids: list[int] | None = None) -> dict:
     body = {"question": question, "mode": mode, "top_k": top_k, "doc_ids": doc_ids or None}
     return _request("POST", "/ask", token, timeout=120, json=body).json()
+
+def get_config() -> dict:
+    return _request("GET", "/config", timeout=90).json()
