@@ -19,7 +19,13 @@ def _detail(response) -> str:
         detail = response.text
     if isinstance(detail, list):  # FastAPI validation errors
         detail = "; ".join(str(d.get("msg", d)) if isinstance(d, dict) else str(d) for d in detail)
-    return str(detail)[:300]
+    text = str(detail)
+    if text.lstrip().lower().startswith(("<!doctype", "<html")):  # hosting platform ka HTML error page
+        return (
+            f"The API is not available right now (HTTP {response.status_code}). "
+            "It may be suspended or restarting. Please try again in a minute."
+        )
+    return text[:300]
 
 
 def _request(method: str, path: str, token: str | None = None, timeout: int = DEFAULT_TIMEOUT, **kwargs):
