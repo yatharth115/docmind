@@ -106,3 +106,18 @@ def test_get_config_calls_config_endpoint(monkeypatch):
     monkeypatch.setattr(api.requests, "request", fake)
     assert api.get_config()["read_only"] is True
     assert seen["url"].endswith("/config")
+
+def test_html_error_page_becomes_friendly_message(monkeypatch):
+    html = "<!DOCTYPE html><html><body>Service Suspended</body></html>"
+    monkeypatch.setattr(api.requests, "request", lambda *a, **k: FakeResp(503, None, text=html))
+    with pytest.raises(api.ApiError) as e:
+        api.get_config()
+    assert "not available" in str(e.value) and "<html" not in str(e.value).lower()
+    assert e.value.status == 503
+
+def test_html_error_message_names_the_api_address(monkeypatch):
+    html = "<html><body>Service Suspended</body></html>"
+    monkeypatch.setattr(api.requests, "request", lambda *a, **k: FakeResp(503, None, text=html))
+    with pytest.raises(api.ApiError) as e:
+        api.get_config()
+    assert api.API_URL in str(e.value)
