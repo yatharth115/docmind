@@ -7,7 +7,8 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
     LLM_API_KEY: str = ""
     LLM_BASE_URL: str = "https://generativelanguage.googleapis.com/v1beta/openai"
-    LLM_MODEL: str = "gemini-3.6-flash"
+    LLM_MODEL: str = "gemini-3.8-flash"
+    LLM_FALLBACK_MODEL: str = "gemini-3.5-flash-lite"
 
    
     ENABLE_RERANK: bool = True
