@@ -5,7 +5,7 @@ def test_overlap_and_length():
     text = " ".join(str(i) for i in range(250))
     pieces = split_words(text, size=200, overlap=30)
     assert len(pieces) == 2
-    assert pieces[1].split()[0] == "170"      # dusra chunk 170 se shuru
+    assert pieces[1].split()[0] == "170"
     assert len(pieces[1].split()) == 80
 
 

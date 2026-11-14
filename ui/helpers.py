@@ -8,7 +8,6 @@ MODE_LABELS = {
 
 
 def safe_markdown(text: str) -> str:
-    """Streamlit '$...$' ko LaTeX samajhta hai (jaise 'US$ 13 million ... US$ 37 million'), isliye escape."""
     return (text or "").replace("$", "\\$")
 
 

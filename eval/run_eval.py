@@ -1,8 +1,3 @@
-"""4 retrieval modes ko questions.json pe chalao, metrics nikalo, results save karo.
-
-Run: python -m eval.run_eval
-     python -m eval.run_eval --out eval/results/chunk100.json
-"""
 import argparse
 import json
 import sys

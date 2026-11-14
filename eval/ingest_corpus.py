@@ -1,8 +1,3 @@
-"""Eval corpus ko disk se seedha DB me daalo (HTTP upload ka 20 MB limit bypass).
-
-Pehli baar:        python -m eval.ingest_corpus
-Dobara sab kuch:   python -m eval.ingest_corpus --reset --size 200 --overlap 30
-"""
 import argparse
 import json
 import secrets
@@ -10,7 +5,7 @@ import sys
 import time
 from datetime import datetime, timezone
 
-import fitz  # PyMuPDF
+import fitz
 from sqlalchemy import func
 
 from app.core.security import hash_password
@@ -27,7 +22,6 @@ BATCH = 64
 def get_or_create_user(db) -> User:
     user = db.query(User).filter(User.email == EVAL_EMAIL).first()
     if user is None:
-        # random password: is user se login nahi hota, ye sirf eval ke liye hai
         user = User(email=EVAL_EMAIL, hashed_password=hash_password(secrets.token_urlsafe(24)))
         db.add(user)
         db.commit()
@@ -41,7 +35,6 @@ def ingest_pdf(db, user, path, size: int, overlap: int) -> int:
         raise ValueError(f"No text found in {path.name}")
     chunks = chunk_segments(segments, size, overlap)
 
-    # storage_path=None: delete endpoint corpus ki asli file kabhi na mitaye
     doc = Document(user_id=user.id, filename=path.name, status="processing", storage_path=None)
     db.add(doc)
     db.commit()
@@ -118,7 +111,7 @@ def main() -> None:
 
     size, overlap = args.size, args.overlap
     if not args.reset and META_PATH.exists():
-        # corpus me ek hi chunking config rehni chahiye, isliye purani wali use karo
+
         old = json.loads(META_PATH.read_text(encoding="utf-8"))
         size, overlap = old["chunk_size"], old["overlap"]
 
@@ -140,7 +133,7 @@ def main() -> None:
             if existing and existing.status == "ready":
                 print(f"skip   {path.name} (already ingested)")
                 continue
-            if existing:  # adhoora ya failed, saaf karke dobara
+            if existing:
                 db.delete(existing)
                 db.commit()
 

@@ -9,7 +9,6 @@ st.set_page_config(page_title="DocMind", layout="wide")
 
 
 def _setting(name: str) -> str | None:
-    """Value env variable se lo, nahi to Streamlit Cloud ke secrets se."""
     value = os.getenv(name)
     if value:
         return value
@@ -24,8 +23,8 @@ if _api_url:
     os.environ["DOCMIND_API_URL"] = _api_url
 
 sys.path.insert(0, str(Path(__file__).parent))
-import api_client as api  # noqa: E402
-from helpers import (  # noqa: E402
+import api_client as api
+from helpers import (
     MODE_LABELS,
     available_modes,
     default_mode,
@@ -105,21 +104,64 @@ def register_form() -> None:
 
 def auth_view(config: dict) -> None:
     st.title("DocMind")
-    st.caption("Ask questions about your documents. Every answer comes with page citations.")
-    if DEMO_HINT:
-        st.info(DEMO_HINT)
+    st.caption(
+        "Ask questions about your documents. "
+        "Every answer comes with page citations."
+    )
+
     if st.session_state.get("notice"):
         st.warning(st.session_state["notice"])
         st.session_state["notice"] = None
 
     if config.get("registration_enabled", True):
         login_tab, register_tab = st.tabs(["Log in", "Create account"])
+
         with login_tab:
             login_form()
+
+            st.divider()
+            st.caption("Explore the pre-loaded documents using the demo account.")
+
+            if st.button("Try the demo", type="primary", use_container_width=True):
+                demo_email = _setting("DOCMIND_DEMO_EMAIL")
+                demo_password = _setting("DOCMIND_DEMO_PASSWORD")
+
+                if not demo_email or not demo_password:
+                    st.error("Demo login is not configured.")
+                else:
+                    try:
+                        token = api.login(demo_email, demo_password)
+                    except api.ApiError as e:
+                        st.error(f"Demo login failed: {e}")
+                    else:
+                        st.session_state["token"] = token
+                        st.session_state["email"] = demo_email
+                        st.rerun()
+
         with register_tab:
             register_form()
+
     else:
         login_form()
+
+        st.divider()
+        st.caption("Explore the pre-loaded documents using the demo account.")
+
+        if st.button("Try the demo", type="primary", use_container_width=True):
+            demo_email = _setting("DOCMIND_DEMO_EMAIL")
+            demo_password = _setting("DOCMIND_DEMO_PASSWORD")
+
+            if not demo_email or not demo_password:
+                st.error("Demo login is not configured.")
+            else:
+                try:
+                    token = api.login(demo_email, demo_password)
+                except api.ApiError as e:
+                    st.error(f"Demo login failed: {e}")
+                else:
+                    st.session_state["token"] = token
+                    st.session_state["email"] = demo_email
+                    st.rerun()
 
 
 def wait_until_ready(token: str, doc_id: int, timeout: int = 180) -> None:

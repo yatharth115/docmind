@@ -1,7 +1,3 @@
-"""Har sawaal ke gold page ka sabse relevant hissa dikhata hai, taaki label galat na ho.
-
-Run: python -m eval.check_labels
-"""
 from app.services.parsing import parse_pdf
 from app.services.prompting import best_snippet, snippet_terms
 from eval.common import CORPUS_DIR

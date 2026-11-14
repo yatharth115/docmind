@@ -12,7 +12,6 @@ def load_questions(path=QUESTIONS_PATH) -> list[dict]:
 
 
 def validate_questions(questions: list, page_counts: dict[str, int]) -> list[str]:
-    """Galtiyon ki list lautata hai. Khaali list = sab theek."""
     errors: list[str] = []
     if not isinstance(questions, list) or not questions:
         return ["questions.json must be a non-empty list"]

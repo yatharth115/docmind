@@ -93,7 +93,7 @@ def test_available_modes_hides_rerank_when_disabled():
     assert "hybrid_rerank" not in available_modes({"rerank_enabled": False})
     assert default_mode({"rerank_enabled": True}) == "hybrid_rerank"
     assert default_mode({"rerank_enabled": False}) == "vector"
-    assert default_mode({}) == "hybrid_rerank"  # config na mile to purana behaviour
+    assert default_mode({}) == "hybrid_rerank"
 
 
 def test_get_config_calls_config_endpoint(monkeypatch):

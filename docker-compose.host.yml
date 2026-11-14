@@ -1,4 +1,3 @@
-# Codespaces ke DNS issue ka workaround. Normal machines pe docker-compose.yml use kar.
 services:
   api:
     build: .
@@ -13,7 +12,7 @@ services:
       LLM_MODEL: ${LLM_MODEL:-gemini-3.6-flash}
       ENABLE_RERANK: ${ENABLE_RERANK:-true}
       ALLOW_REGISTRATION: ${ALLOW_REGISTRATION:-true}
-      READ_ONLY_DOCS: ${READ_ONLY_DOCS:-false} 
+      READ_ONLY_DOCS: ${READ_ONLY_DOCS:-false}
     volumes:
       - uploads:/app/uploads
     healthcheck:

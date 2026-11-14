@@ -5,7 +5,6 @@ QTYPES = ("exact", "paraphrase", "numeric")
 
 
 def is_hit(result: dict, gold_file: str, gold_pages) -> bool:
-    """Result tabhi hit hai jab file bhi wahi ho aur page bhi gold pages me ho."""
     return result.get("filename") == gold_file and result.get("page") in gold_pages
 
 
@@ -36,7 +35,6 @@ def aggregate(scored: list[dict], ks=KS) -> dict:
 
 
 def wilson_interval(successes: int, n: int, z: float = 1.96) -> tuple[float, float]:
-    """95% confidence interval for a proportion (chhote sample ke liye normal se behtar)."""
     if n == 0:
         return (0.0, 0.0)
     p = successes / n
@@ -47,7 +45,6 @@ def wilson_interval(successes: int, n: int, z: float = 1.96) -> tuple[float, flo
 
 
 def percentile(values, q: float) -> float:
-    """Nearest-rank percentile, q 0-100."""
     xs = sorted(values)
     if not xs:
         return 0.0

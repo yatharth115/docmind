@@ -35,7 +35,6 @@ st.info(
     "Read the confidence interval before claiming one mode is better."
 )
 
-# 1. Summary
 rows = []
 for m in mode_names:
     s = modes[m]["summary"]
@@ -56,7 +55,6 @@ st.subheader("Summary")
 st.dataframe(df.round(3), width="stretch")
 st.bar_chart(df[["Hit@1", "Hit@3", "Hit@5"]])
 
-# 2. By question type
 st.subheader("Hit@5 by question type")
 types = sorted({r["type"] for r in modes[mode_names[0]]["records"]})
 by_type = {}
@@ -68,7 +66,7 @@ for m in mode_names:
     }
 st.dataframe(pd.DataFrame(by_type).T.round(3), width="stretch")
 
-# 3. Head to head
+
 st.subheader("Head to head (Hit@5)")
 c1, c2 = st.columns(2)
 a = c1.selectbox("Mode A", mode_names, index=0, format_func=LABELS.get)
@@ -85,7 +83,6 @@ with st.expander("Which questions?"):
     st.write(f"Only {LABELS[a]}:", only_a or "none")
     st.write(f"Only {LABELS[b]}:", only_b or "none")
 
-# 4. Failures
 st.subheader("Failures (gold page not in top 5)")
 mode = st.selectbox("Mode", mode_names, index=len(mode_names) - 1, format_func=LABELS.get, key="fail_mode")
 failed = [r for r in modes[mode]["records"] if not r["hit@5"]]
